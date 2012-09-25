@@ -1,5 +1,8 @@
 source :rubygems
 
+# Create and send email.
+gem "mail"
+
 # XML / HTML parsing.
 gem "nokogiri"
 

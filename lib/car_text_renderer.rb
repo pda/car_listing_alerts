@@ -9,18 +9,20 @@ class CarTextRenderer
   def to_s
     [
       "#{car.year} #{car.model}",
-      "#{car.km} km",
+      "#{format_integer(car.km)} km",
       "#{car.transmission} transmission",
       "Auction grade: #{car.auction_grade}",
-      "Image: #{car.image}",
       "Link: #{car.link}",
-      "Identifier: #{car.identifier}",
-      "Digest: #{car.digest}",
     ].join("\n")
   end
 
   private
 
   attr_reader :car
+
+  # Based on Rails number_with_delimiter
+  def format_integer(integer)
+    integer.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+  end
 
 end
