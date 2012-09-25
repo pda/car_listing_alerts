@@ -1,10 +1,26 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    backports (2.6.4)
+    coderay (1.0.7)
+    method_source (0.8)
     nokogiri (1.5.5)
+    pry (0.9.10)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.3.1)
+    rdo (0.0.6)
+    rdo-postgres (0.0.2)
+      rdo (>= 0.0.1)
+    slop (3.3.3)
+    virtus (0.5.2)
+      backports (~> 2.6.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   nokogiri
+  pry
+  rdo-postgres
+  virtus
