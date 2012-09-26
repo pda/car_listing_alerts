@@ -53,7 +53,7 @@ class Fetcher
     Car.new(
       year: year,
       model: model,
-      km: text.match(/(\d+,\d+) kms/)[1].gsub(",", "").to_i,
+      km: text.match(/(\d+(?:,\d{3})*) kms?/)[1].gsub(",", "").to_i,
       auction_grade: text.match(/Condition\/Grade:\s+(.+)/i)[1],
       transmission: text.match(/5 speed/i) ? "Manual" : text.match(/automatic/i) ? "Automatic" : "Unknown",
       image: box.css("img").first.attr(:src).gsub(/^\s+|\s+$/, ""),
