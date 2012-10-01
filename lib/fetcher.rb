@@ -12,20 +12,19 @@ require "net/http"
 class Fetcher
 
   BASE_URL = URI("http://www.j-spec.com.au/auction/MAZDA/RX-7")
+  MAX_PAGES = 10
 
   def fetch
     alert_list = AlertList.new
 
     next_path = BASE_URL.request_uri
-    while next_path
+    pages_fetched = 0
+
+    while next_path && pages_fetched < MAX_PAGES
       puts "Fetching #{next_path}"
       body = Net::HTTP.get(BASE_URL.host, next_path.to_s)
-      doc = Nokogiri::HTML(body)
-      doc.css(".kbox").each do |box|
-        car = parse_box(box, BASE_URL)
-        process_car(car, alert_list)
-      end
-      next_path = doc.xpath("//div[@class='pagination']//a[text()='>>']/@href").first
+      next_path = process_page(body, alert_list)
+      pages_fetched += 1
     end
 
     alert_list.execute
@@ -33,6 +32,18 @@ class Fetcher
 
   private
 
+  # Process the current page body.
+  # Return the URL path of the next page, or null.
+  def process_page(body, alert_list)
+    doc = Nokogiri::HTML(body)
+    doc.css(".kbox").each do |box|
+      car = parse_box(box, BASE_URL)
+      process_car(car, alert_list)
+    end
+    doc.xpath("//div[@class='pagination']//a[text()='>>']/@href").first
+  end
+
+  # Process an individual car listing.
   def process_car(car, alert_list)
     if Car.identifier_exists?(car.identifier)
       unless Car.digest_exists?(car.digest)
