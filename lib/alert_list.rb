@@ -6,9 +6,10 @@ require "car_html_renderer"
 
 class AlertList
 
-  def initialize
-    @new_cars = []
-    @updated_cars = []
+  def initialize(options = {})
+    filter = filter_for_year(options[:year_minimum])
+    @new_cars = FilteredList.new(filter)
+    @updated_cars = FilteredList.new(filter)
   end
 
   attr_reader :new_cars
@@ -30,6 +31,14 @@ class AlertList
   end
 
   private
+
+  def filter_for_year(year)
+    filter = if year
+      ->(car) { car.year >= year.to_i }
+    else
+      ->(car) { true }
+    end
+  end
 
   def count_message
     "#{new_cars.length} new, #{updated_cars.length} updated."
@@ -109,6 +118,17 @@ class AlertList
     end
 
     b.tap(&:rewind).read
+  end
+
+  # A list which filters insertions through the specified lambda.
+  class FilteredList < Array
+    def initialize(filter)
+      @filter = filter
+      super()
+    end
+    def <<(item)
+      super if @filter.call(item)
+    end
   end
 
 end
