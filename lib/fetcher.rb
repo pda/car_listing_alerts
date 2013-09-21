@@ -15,7 +15,10 @@ class Fetcher
   MAX_PAGES = 10
 
   def fetch
-    alert_list = AlertList.new(year_minimum: ENV["YEAR_MINIMUM"])
+    alert_list = AlertList.new(
+      year_minimum: ENV["YEAR_MINIMUM"],
+      auction_grade: /\A\s*\d(\.\d)?\s\z/, # numeric grades only, no "R" etc.
+    )
 
     next_path = BASE_URL.request_uri
     pages_fetched = 0
